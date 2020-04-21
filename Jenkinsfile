@@ -7,7 +7,7 @@ node('workers'){
 
     stage('Unit Tests'){
         def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
-        docker.inside{
+        imageTest.inside{
             sh 'python test_main.py'
         }
     }
