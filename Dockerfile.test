@@ -1,0 +1,8 @@
+FROM python:2.7.10
+
+WORKDIR /app 
+
+COPY test_main.py .
+COPY movies.json .
+
+CMD python test_main.py

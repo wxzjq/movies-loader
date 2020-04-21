@@ -1,7 +1,6 @@
 import unittest
 import json
 
-
 class TestJSONLoaderMethods(unittest.TestCase):
     movies = []
 
