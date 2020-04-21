@@ -7,6 +7,6 @@ node('workers'){
 
     stage('Unit Tests'){
         sh "docker build -t ${imageName}-test -f Dockerfile.test ."
-        sh "docker run -it ${imageName}-test"
+        sh "docker run --rm ${imageName}-test"
     }
 }
