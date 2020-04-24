@@ -11,4 +11,8 @@ node('workers'){
             sh 'python test_main.py'
         }
     }
+
+    stage('Build'){
+        docker.build(imageName)
+    }
 }
