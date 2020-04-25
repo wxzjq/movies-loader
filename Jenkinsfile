@@ -19,7 +19,7 @@ node('workers'){
     }
 
     stage('Push'){
-        sh "$(aws ecr get-login --no-include-email --region ${region}) || true"
+        sh "\$(aws ecr get-login --no-include-email --region ${region}) || true"
 
         docker.withRegistry("https://${registry}") {
             docker.image(imageName).push(commitID())
