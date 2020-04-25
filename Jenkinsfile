@@ -1,5 +1,6 @@
 def imageName = 'mlabouardy/movies-loader'
-def registry = 'https://registry.slowcoder.com'
+def registry = '305929695733.dkr.ecr.eu-west-3.amazonaws.com'
+def region = 'eu-west-3'
 
 node('workers'){
     stage('Checkout'){
@@ -18,8 +19,12 @@ node('workers'){
     }
 
     stage('Push'){
-        docker.withRegistry(registry, 'registry') {
-            docker.image(imageName).push(commitID())
+        sh "aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${registry}/${imageName}"
+        
+        docker.image(imageName).push(commitID())
+
+        if (env.BRANCH_NAME == 'develop') {
+            docker.image(imageName).push('develop')
         }
     }
 }
