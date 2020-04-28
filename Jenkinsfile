@@ -1,6 +1,5 @@
 def imageName = 'mlabouardy/movies-loader'
-def registry = '305929695733.dkr.ecr.eu-west-3.amazonaws.com'
-def region = 'eu-west-3'
+def registry = 'https://registry.slowcoder.com'
 
 node('workers'){
     stage('Checkout'){
@@ -9,9 +8,10 @@ node('workers'){
 
     stage('Unit Tests'){
         def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
-        imageTest.inside{
+        imageTest.inside("-v $PWD:reports:/app/reports"){
             sh 'python test_main.py'
         }
+        sh "ls /home/ec2-user/reports"
     }
 
     stage('Build'){
@@ -19,9 +19,7 @@ node('workers'){
     }
 
     stage('Push'){
-        sh "\$(aws ecr get-login --no-include-email --region ${region}) || true"
-
-        docker.withRegistry("https://${registry}") {
+        docker.withRegistry(registry, 'registry') {
             docker.image(imageName).push(commitID())
 
             if (env.BRANCH_NAME == 'develop') {
