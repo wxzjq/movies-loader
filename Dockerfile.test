@@ -2,7 +2,7 @@ FROM python:2.7.10
 
 WORKDIR /app 
 
-pip install unittest-xml-reporting
+RUN pip install unittest-xml-reporting
 
 COPY test_main.py .
 COPY movies.json .
