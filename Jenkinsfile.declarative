@@ -12,16 +12,20 @@ pipeline{
 
         stage('Unit Tests'){
             steps{
-                def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
-                imageTest.inside{
-                    sh "python test_main.py"
+                script {
+                    def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
+                    imageTest.inside{
+                        sh "python test_main.py"
+                    }
                 }
             }
         }
 
         stage('Build'){
             steps{
-                docker.build(imageName)
+                script {
+                    docker.build(imageName)
+                }
             }
         }
 
