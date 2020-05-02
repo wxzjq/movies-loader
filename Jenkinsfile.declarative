@@ -1,3 +1,6 @@
+def imageName = 'mlabouardy/movies-loader'
+def registry = 'https://registry.slowcoder.com'
+
 pipeline{
     agent{
         label 'workers'
