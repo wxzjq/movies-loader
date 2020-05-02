@@ -3,9 +3,7 @@ def registry = 'https://registry.slowcoder.com'
 
 pipeline{
     agent{
-        docker { 
-            image 'python:3.7.3'
-        }
+        label 'workers'
     }
 
     stages{
@@ -18,7 +16,10 @@ pipeline{
         stage('Unit Tests'){
             steps{
                 script {
-                    sh 'python test_main.py'
+                    def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
+                    imageTest.inside{
+                        sh "python test_main.py"
+                    }
                 }
             }
         }
@@ -26,25 +27,28 @@ pipeline{
         stage('Build'){
             steps{
                 script {
-                    echo 'build image'
-                   // docker.build(imageName)
+                    docker.build(imageName)
                 }
             }
         }
 
         stage('Push'){
             steps{
-                echo "pushing the image"
-                // script {
-                 //   docker.withRegistry(registry, 'registry') {
-                      //  docker.image(imageName).push(commitID())
+                docker.withRegistry(registry, 'registry') {
+                        docker.image(imageName).push(commitID())
 
-                      //  if (env.BRANCH_NAME == 'develop') {
-                      //      docker.image(imageName).push('develop')
-                    //    }
-                  //  }
-                //}
+                        if (env.BRANCH_NAME == 'develop') {
+                            docker.image(imageName).push('develop')
+                        }
+                }
             }
         }
     }
+}
+
+def commitID() {
+    sh 'git rev-parse HEAD > .git/commitID'
+    def commitID = readFile('.git/commitID').trim()
+    sh 'rm .git/commitID'
+    commitID
 }
