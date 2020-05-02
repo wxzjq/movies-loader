@@ -3,7 +3,9 @@ def registry = 'https://registry.slowcoder.com'
 
 pipeline{
     agent{
-        label 'workers'
+        docker { 
+            image 'python:3.7.3'
+        }
     }
 
     stages{
@@ -16,10 +18,8 @@ pipeline{
         stage('Unit Tests'){
             steps{
                 script {
-                    def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
-                    imageTest.inside{
-                        sh "python test_main.py"
-                    }
+                    sh 'pip install unittest-xml-reporting'
+                    sh 'python test_main.py'
                 }
             }
         }
@@ -27,20 +27,23 @@ pipeline{
         stage('Build'){
             steps{
                 script {
-                    docker.build(imageName)
+                    echo 'build image'
+                   // docker.build(imageName)
                 }
             }
         }
 
         stage('Push'){
             steps{
-                echo "Push to registry"
-               // docker.withRegistry(registry, 'registry') {
-                //docker.image(imageName).push(commitID())
+                echo "pushing the image"
+                // script {
+                 //   docker.withRegistry(registry, 'registry') {
+                      //  docker.image(imageName).push(commitID())
 
-                //if (env.BRANCH_NAME == 'develop') {
-                  //  docker.image(imageName).push('develop')
-               // }
+                      //  if (env.BRANCH_NAME == 'develop') {
+                      //      docker.image(imageName).push('develop')
+                    //    }
+                  //  }
                 //}
             }
         }
