@@ -31,12 +31,21 @@ node('workers'){
                 if (env.BRANCH_NAME == 'preprod') {
                     docker.image(imageName).push('preprod')
                 }
+                if (env.BRANCH_NAME == 'latest') {
+                    docker.image(imageName).push('latest')
+                }
             }
         }
 
         stage('Deploy'){
             if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod'){
                 build job: "watchlist-deployment/${env.BRANCH_NAME}"
+            }
+
+            if(env.BRANCH_NAME == 'master'){
+                timeout(time: 2, unit: "HOURS") {
+                    input message: "Approve Deploy?", ok: "Yes"
+                }
             }
         }
     } catch(e){
