@@ -28,10 +28,12 @@ node('workers'){
                 if (env.BRANCH_NAME == 'develop') {
                     docker.image(imageName).push('develop')
                 }
+
                 if (env.BRANCH_NAME == 'preprod') {
                     docker.image(imageName).push('preprod')
                 }
-                if (env.BRANCH_NAME == 'latest') {
+
+                if (env.BRANCH_NAME == 'master') {
                     docker.image(imageName).push('latest')
                 }
             }
@@ -46,6 +48,7 @@ node('workers'){
                 timeout(time: 2, unit: "HOURS") {
                     input message: "Approve Deploy?", ok: "Yes"
                 }
+                build job: "watchlist-deployment/master"
             }
         }
     } catch(e){
