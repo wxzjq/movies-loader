@@ -34,6 +34,8 @@ node('workers'){
             build job: "watchlist-deployment/${env.BRANCH_NAME}"
         }
     }
+
+    slackSend (color: '#2e7d32', message: "${env.JOB_NAME} has been successfully deployed")
 }
 
 def commitID() {
