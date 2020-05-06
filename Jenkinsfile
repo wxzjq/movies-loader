@@ -21,18 +21,21 @@ node('workers'){
         }
 
         stage('Push'){
-        sh "\$(aws ecr get-login --no-include-email --region ${region}) || true"
+            sh "\$(aws ecr get-login --no-include-email --region ${region}) || true"
             docker.withRegistry("https://${registry}") {
                 docker.image(imageName).push(commitID())
 
                 if (env.BRANCH_NAME == 'develop') {
                     docker.image(imageName).push('develop')
                 }
+                if (env.BRANCH_NAME == 'preprod') {
+                    docker.image(imageName).push('preprod')
+                }
             }
         }
 
         stage('Deploy'){
-            if(env.BRANCH_NAME == 'develop'){
+            if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod'){
                 build job: "watchlist-deployment/${env.BRANCH_NAME}"
             }
         }
