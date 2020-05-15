@@ -39,6 +39,11 @@ node('workers'){
             }
         }
 
+        stage('Analyze'){
+            sh 'echo "${registry}/${imageName}:${commitID()} `pwd`/Dockerfile" > anchore_images'
+            anchore name: 'anchore_images'
+        }
+
         stage('Deploy'){
             if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod'){
                 build job: "watchlist-deployment/${env.BRANCH_NAME}"
