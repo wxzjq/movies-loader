@@ -40,8 +40,9 @@ node('workers'){
         }
 
         stage('Analyze'){
-            sh 'echo "${registry}/${imageName}:${commitID()} `pwd`/Dockerfile" > anchore_images'
-            anchore name: 'anchore_images'
+            def scannedImage = "${registry}/${imageName}:${commitID()} ${workspace}/Dockerfile"
+            writeFile file: 'images', text: scannedImage
+            anchore name: 'images'
         }
 
         stage('Deploy'){
