@@ -39,6 +39,12 @@ node('workers'){
             }
         }
 
+        stage('Analyze'){
+            def scannedImage = "${registry}/${imageName}:${commitID()} ${workspace}/Dockerfile"
+            writeFile file: 'images', text: scannedImage
+            anchore name: 'images'
+        }
+
         stage('Deploy'){
             if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod'){
                 build job: "watchlist-deployment/${env.BRANCH_NAME}"
