@@ -78,11 +78,29 @@ node('workers'){
                 build job: "watchlist-deployment/master"
             }
         }
+
+        stage('Healthcheck'){
+            sh "curl -m ${getUrl()}"
+        }
+
     } catch(e){
         currentBuild.result = 'FAILED'
         throw e
     } finally {
         notifySlack(currentBuild.result)
+    }
+}
+
+
+
+def getUrl(){
+    switch(env.BRANCH_NAME){
+        case 'preprod':
+            return 'https://api.staging.internal.foxapi.xyz'
+        case 'master':
+            return 'https://api.production.internal.foxapi.xyz'
+        default:
+            return 'https://api.sandbox.internal.foxapi.xyz'
     }
 }
 
