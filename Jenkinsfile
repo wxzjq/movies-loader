@@ -1,6 +1,6 @@
-def imageName = 'mlabouardy/movies-loader'
-def registry = '305929695733.dkr.ecr.eu-west-3.amazonaws.com'
-def region = 'eu-west-3'
+def imageName = 'wxzjq/movies-loader'
+def registry = '591894853770.dkr.ecr.ap-southeast-1.amazonaws.com'
+def region = 'ap-southeast-1'
 
 node('workers'){
     try {
